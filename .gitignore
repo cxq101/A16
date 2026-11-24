@@ -1,0 +1,18 @@
+# Local dependencies, tools and credentials
+node_modules/
+.openai/
+.playwright-cli/
+.env
+.env.*
+!.env.example
+*.log
+Thumbs.db
+.DS_Store
+
+# Keep tracked placeholders for declared empty working directories
+/outputs/*
+!/outputs/.gitkeep
+/work/*
+!/work/.gitkeep
+
+# dist contains hand-written prototype sources; do not ignore it.

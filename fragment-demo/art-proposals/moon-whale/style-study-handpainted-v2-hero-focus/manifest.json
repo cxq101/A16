@@ -1,0 +1,41 @@
+{
+  "status": "visual-review-not-approved",
+  "generation": "built-in image_gen edits",
+  "referenceSet": "../style-study-handpainted-v1/",
+  "changes": [
+    "Simplified low-contrast backgrounds",
+    "Reduced moon, cloud, surf, fish and seabed detail",
+    "Clearer whale silhouettes, expressive eyes and character-bound markings"
+  ],
+  "preserved": [
+    "Card names",
+    "Rarity hierarchy and broad frames",
+    "Categories",
+    "Flavor text",
+    "Three-digit numbers"
+  ],
+  "cards": [
+    {
+      "name": "听潮幼鲸",
+      "rarity": "普通",
+      "number": "003",
+      "image": "common.png",
+      "prompt": "common.prompt.txt"
+    },
+    {
+      "name": "逐月灵鲸",
+      "rarity": "稀有",
+      "number": "002",
+      "image": "rare.png",
+      "prompt": "rare.prompt.txt"
+    },
+    {
+      "name": "月潮之鲸",
+      "rarity": "传说",
+      "number": "001",
+      "image": "legendary.png",
+      "prompt": "legendary.prompt.txt"
+    }
+  ],
+  "notes": "Flattened static concepts. Original proposals retained; Demo and current selected card manifest not replaced."
+}

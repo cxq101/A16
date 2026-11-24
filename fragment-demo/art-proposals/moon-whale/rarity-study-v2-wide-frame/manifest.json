@@ -1,0 +1,33 @@
+{
+  "status": "visual-review",
+  "supersedesForComparison": "../rarity-study-v1/manifest.json",
+  "scope": "Wider borders and stronger rarity hierarchy; preserve existing forms and printed information.",
+  "generation": "built-in image_gen edits",
+  "cards": [
+    {
+      "name": "听潮幼鲸",
+      "number": "003",
+      "design": "普通 · 加宽简洁银框",
+      "image": "common.png",
+      "reference": "../rarity-study-v1/common.png",
+      "prompt": "common.prompt.txt"
+    },
+    {
+      "name": "逐月灵鲸",
+      "number": "002",
+      "design": "稀有 · 双层蓝银金属框",
+      "image": "rare.png",
+      "reference": "../rarity-study-v1/rare.png",
+      "prompt": "rare.prompt.txt"
+    },
+    {
+      "name": "月潮之鲸",
+      "number": "001",
+      "design": "传说 · 多层金框与浮雕",
+      "image": "legendary.png",
+      "reference": "../rarity-study-v1/legendary.png",
+      "prompt": "legendary.prompt.txt"
+    }
+  ],
+  "limitations": "Flattened concept images; apparent metal, relief and foil are baked lighting, not engine material validation. Demo and current card manifest unchanged."
+}

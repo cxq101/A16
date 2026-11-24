@@ -1,0 +1,19 @@
+Edit target: the attached approved B full-art Moon-Tide Whale trading card. Create ONE refined front-face card mockup for final layout review. Preserve the existing exact recognizable whale illustration, pose, blue/silver constellation markings, full moon, moonlight, ocean wave composition, border silhouette and full-art approach. No new subject or scene, no desk or hand, no collage. Straight-on, portrait 2:3, entire card visible, minimum external margins. This is a layout refinement of this same card, not a new illustration direction.
+Confirmed information, exact Chinese text:
+Title “月潮之鲸”
+Categories “类别：灵兽 · 巨兽”
+Attributes “属性：水 · 月”
+Rarity “传说”
+Flavor “它循着月光迁徙，为迷航者留下潮汐的路。”
+Series “星旅藏集”
+Collector number EXACTLY “001/???” (three literal question marks, unknown series total; replace the previous 001/024).
+No other text, no attack/health/cost/skills, no finish labels.
+Refinements:
+1. Use an elegant restrained printed TCG hierarchy. Compact the top title plaque slightly (around 15% less height than reference) so illustration has room. Main title pale ivory, consistent serif Chinese typography. Thin brushed silver edge and restrained champagne-gold linework, not more ornament.
+2. Artwork remains continuous to the lower edge behind all supporting information. Bottom support region roughly the lowest 21% of the card. Add a smooth deep-navy translucent gradient behind the text only. Preserve visible wave texture, but subdued enough to avoid letter/foam collisions; no light paper box or separate solid panel.
+3. Bottom row 1: categories left; small faceted gold diamond rarity emblem plus “传说” right. Rarity typography smaller and calmer than reference so it doesn't compete with title. Diamond is the rarity symbol.
+4. Bottom row 2: attributes left-aligned to category row, clear small cyan drop and ivory crescent next to 水 and 月. The crescent represents Moon attribute and is distinct from the diamond rarity emblem. Keep categories and attributes separate.
+5. Flavor text below these, balanced in two short lines, exact wording and punctuation: first line “它循着月光迁徙，” second line “为迷航者留下潮汐的路。” Slightly smaller than category text but readable at card size. Not italic brush calligraphy. Clear consistent Chinese type.
+6. Footer: small compass-star series emblem plus small series name “星旅藏集” on left; “001/???” aligned right. Tiny fine divider above footer. Keep safe inset from outer border, even baseline and generous breathing room.
+7. All metadata is neatly aligned and has a professional common grid. Frame and text are printed design, restrained metallic highlight. The painted luminous whale remains the hero. No puzzle grid.
+Output one polished card concept image, no annotations or alternate layouts.

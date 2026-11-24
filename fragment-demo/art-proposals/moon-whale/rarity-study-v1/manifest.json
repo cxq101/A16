@@ -1,0 +1,31 @@
+{
+  "status": "proposal-not-approved",
+  "purpose": "Whale-family rarity visual study; distinct names and forms per earlier user instruction.",
+  "production": "Static built-in image_gen concepts; dynamic foil, relief and completion animations are not implemented; Demo and current approved card spec unchanged.",
+  "cards": [
+    {
+      "name": "听潮幼鲸",
+      "rarity": "普通",
+      "collectorNumber": "003",
+      "numberStatus": "proposed for this study",
+      "image": "common.png",
+      "prompt": "common.prompt.txt"
+    },
+    {
+      "name": "逐月灵鲸",
+      "rarity": "稀有",
+      "collectorNumber": "002",
+      "numberStatus": "proposed for this study",
+      "image": "rare.png",
+      "prompt": "rare.prompt.txt"
+    },
+    {
+      "name": "月潮之鲸",
+      "rarity": "传说",
+      "collectorNumber": "001",
+      "numberStatus": "proposed for this study",
+      "image": "legendary.png",
+      "prompt": "legendary.prompt.txt"
+    }
+  ]
+}

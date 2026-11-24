@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-11-24",
+  "pathBase": "project-root",
+  "latestReviewSet": "handpainted-hero-focus",
+  "approvedSet": null,
+  "demoUsesGeneratedReviewImages": false,
+  "sets": [
+    {
+      "id": "full-art-b-original",
+      "status": "superseded-information",
+      "files": [
+        "fragment-demo/art-proposals/moon-whale/moon-whale-b-review-v1.png",
+        "fragment-demo/art-proposals/moon-whale/moon-whale-b-review-v1.json",
+        "fragment-demo/art-proposals/moon-whale/moon-whale-b-review-v1.prompt.txt"
+      ],
+      "notes": "旧系列正面、属性与编号分母已废止。"
+    },
+    {
+      "id": "full-art-b-information-revision",
+      "status": "review-only-not-final",
+      "files": [
+        "fragment-demo/art-proposals/moon-whale/moon-whale-b-review-v2.png",
+        "fragment-demo/art-proposals/moon-whale/moon-whale-b-review-v2.json",
+        "fragment-demo/art-proposals/moon-whale/moon-whale-b-review-v2.prompt.txt",
+        "fragment-demo/art-proposals/moon-whale/astral-series-back-review-v1.png",
+        "fragment-demo/art-proposals/moon-whale/astral-series-back-review-v1.prompt.txt",
+        "fragment-demo/art-proposals/moon-whale/current.json"
+      ],
+      "notes": "子目录 current.json 是这一阶段的单卡审阅指针，不是最终批准指针。"
+    },
+    {
+      "id": "rarity-initial",
+      "status": "historical-study",
+      "manifest": "fragment-demo/art-proposals/moon-whale/rarity-study-v1/manifest.json",
+      "notes": "三种品质与不同鲸形态的首次研究。"
+    },
+    {
+      "id": "rarity-wide-frame",
+      "status": "historical-study",
+      "manifest": "fragment-demo/art-proposals/moon-whale/rarity-study-v2-wide-frame/manifest.json",
+      "notes": "加宽边框、强化品质的研究。"
+    },
+    {
+      "id": "handpainted-initial",
+      "status": "historical-study",
+      "manifest": "fragment-demo/art-proposals/moon-whale/style-study-handpainted-v1/manifest.json",
+      "notes": "手绘动画质感试验，不代表最终画风确认。"
+    },
+    {
+      "id": "handpainted-hero-focus",
+      "status": "visual-review-not-approved",
+      "manifest": "fragment-demo/art-proposals/moon-whale/style-study-handpainted-v2-hero-focus/manifest.json",
+      "files": [
+        "fragment-demo/art-proposals/moon-whale/style-study-handpainted-v2-hero-focus/common.png",
+        "fragment-demo/art-proposals/moon-whale/style-study-handpainted-v2-hero-focus/rare.png",
+        "fragment-demo/art-proposals/moon-whale/style-study-handpainted-v2-hero-focus/legendary.png"
+      ],
+      "notes": "最新待审阅；未选择最终稿、未接入 Demo、未拆分生产图层。"
+    }
+  ]
+}

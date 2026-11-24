@@ -1,0 +1,31 @@
+{
+  "status": "style-exploration-not-approved",
+  "style": "Hand-drawn fantasy animation; soft cel-like character shading and painted gouache/watercolor environments.",
+  "sourceStyleRequest": "宫崎骏／吉卜力式手绘动画方向",
+  "generation": "built-in image_gen",
+  "referenceSet": "../rarity-study-v2-wide-frame/",
+  "cards": [
+    {
+      "name": "听潮幼鲸",
+      "rarity": "普通",
+      "number": "003",
+      "image": "common.png",
+      "prompt": "common.prompt.txt"
+    },
+    {
+      "name": "逐月灵鲸",
+      "rarity": "稀有",
+      "number": "002",
+      "image": "rare.png",
+      "prompt": "rare.prompt.txt"
+    },
+    {
+      "name": "月潮之鲸",
+      "rarity": "传说",
+      "number": "001",
+      "image": "legendary.png",
+      "prompt": "legendary.prompt.txt"
+    }
+  ],
+  "notes": "Character identities and metadata retained. Common and rare used completed legendary painting as an additional visual-style reference. Flattened static images only; Demo and current selected card remain unchanged."
+}

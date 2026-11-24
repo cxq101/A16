@@ -1,0 +1,166 @@
+{
+  "schemaVersion": 1,
+  "standardVersion": "1.0.0",
+  "phase": "formalized",
+  "framework": null,
+  "directories": [
+    {
+      "path": ".project",
+      "purpose": "治理接入与项目级资产选择状态"
+    },
+    {
+      "path": "docs",
+      "purpose": "现行设计、决策、交接与验证"
+    },
+    {
+      "path": "docs/validation",
+      "purpose": "注明日期与范围的验证证据"
+    },
+    {
+      "path": "fragment-demo",
+      "purpose": "保留既有浏览器原型与历史材料"
+    },
+    {
+      "path": "fragment-demo/dist",
+      "purpose": "混合布局中的手写源码与部分生成物，逐文件维护"
+    },
+    {
+      "path": "fragment-demo/art-proposals",
+      "purpose": "效果图研究与生成批次"
+    },
+    {
+      "path": "outputs",
+      "purpose": "既有输出预留目录，无权威职责"
+    },
+    {
+      "path": "work",
+      "purpose": "既有临时工作预留目录，无权威职责"
+    }
+  ],
+  "documents": [
+    {
+      "topic": "project-scope",
+      "path": "docs/project-brief.md"
+    },
+    {
+      "topic": "gameplay-and-progression",
+      "path": "docs/game-design.md"
+    },
+    {
+      "topic": "card-specification",
+      "path": "docs/card-spec.md"
+    },
+    {
+      "topic": "art-direction",
+      "path": "docs/art-direction.md"
+    },
+    {
+      "topic": "interaction",
+      "path": "docs/interaction-design.md"
+    },
+    {
+      "topic": "technical-baseline",
+      "path": "docs/technical-baseline.md"
+    },
+    {
+      "topic": "decision-history",
+      "path": "docs/decisions.md"
+    },
+    {
+      "topic": "reference-evidence",
+      "path": "docs/references.md"
+    },
+    {
+      "topic": "governance",
+      "path": "docs/governance.md"
+    },
+    {
+      "topic": "handoff",
+      "path": "docs/handoff.md"
+    },
+    {
+      "topic": "art-selection-status",
+      "path": ".project/artifacts.json"
+    },
+    {
+      "topic": "migration-record",
+      "path": "docs/validation/2026-11-24-migration.md"
+    }
+  ],
+  "versions": [
+    {
+      "object": "adopted-governance",
+      "source": ".project/formalization.json",
+      "selector": "$.standardVersion"
+    },
+    {
+      "object": "formalization-profile-schema",
+      "source": ".project/formalization.json",
+      "selector": "$.schemaVersion"
+    },
+    {
+      "object": "artifact-registry-schema",
+      "source": ".project/artifacts.json",
+      "selector": "$.schemaVersion"
+    },
+    {
+      "object": "prototype-dependencies",
+      "source": "fragment-demo/package.json",
+      "selector": "$.dependencies"
+    },
+    {
+      "object": "prototype-resolved-dependencies",
+      "source": "fragment-demo/package-lock.json",
+      "selector": "$.packages"
+    }
+  ],
+  "requiredFiles": [
+    "AGENTS.md",
+    "README.md",
+    ".project/formalization.json",
+    ".project/artifacts.json",
+    "docs/project-brief.md",
+    "docs/game-design.md",
+    "docs/card-spec.md",
+    "docs/art-direction.md",
+    "docs/interaction-design.md",
+    "docs/technical-baseline.md",
+    "docs/decisions.md",
+    "docs/references.md",
+    "docs/governance.md",
+    "docs/handoff.md",
+    "docs/validation/2026-11-24-documentation.md",
+    ".project/validate-docs.cjs",
+    "docs/validation/2026-11-24-migration.md",
+    ".project/migration-source.json",
+    "outputs/.gitkeep",
+    "work/.gitkeep",
+    ".gitignore"
+  ],
+  "exceptions": [
+    {
+      "rule": "core-library",
+      "reason": "生产引擎未定，现有浏览器原型不强制接入核心库；选型时优先评估 BaX 适配性",
+      "scope": "当前文档接入与浏览器原型",
+      "reviewWhen": "生产引擎与公共机制设计确定时"
+    },
+    {
+      "rule": "directory-layout",
+      "reason": "保留历史原型混合布局，dist 含手写源码，不机械迁移",
+      "scope": "fragment-demo",
+      "reviewWhen": "计划迁移正式源码或改构建流程时"
+    },
+    {
+      "rule": "production-versioning",
+      "reason": "未有产品发布、正式资产包和存档架构，不补造统一版本",
+      "scope": "尚未建立的生产版本对象",
+      "reviewWhen": "建立生产构建和存档规范时"
+    },
+    {
+      "rule": "validation-runtime",
+      "reason": "本机 Python 应用别名不可运行，本次以可复跑 Node 检查覆盖接入结构和链接，不宣称技能原版 Python 检查已执行",
+      "scope": "本次文档检查",
+      "reviewWhen": "可用 Python 环境具备时补跑技能检查"
+    }
+  ]
+}

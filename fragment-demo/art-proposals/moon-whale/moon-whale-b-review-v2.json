@@ -1,0 +1,41 @@
+{
+  "status": "visual-review",
+  "revision": 2,
+  "supersedes": "moon-whale-b-review-v1.json",
+  "layout": "B-full-art",
+  "name": "月潮之鲸",
+  "series": {
+    "name": "星旅藏集",
+    "membership": "exactly-one",
+    "front": "no series emblem or series name",
+    "back": "shared-within-series; compass-star emblem only; no text"
+  },
+  "rarity": "传说",
+  "categories": [
+    "灵兽",
+    "巨兽"
+  ],
+  "collectorNumber": "001",
+  "displayNumber": "001",
+  "flavorText": "它循着月光迁徙，为迷航者留下潮汐的路。",
+  "rules": {
+    "rarityPerCard": 1,
+    "raritiesExtensible": true,
+    "categoriesMultiple": true,
+    "categoriesExtensible": true,
+    "attributesEnabled": false,
+    "numberFormat": "number-only; no denominator or total",
+    "uniqueNameArtAndNumberPerCard": true,
+    "relatedForms": "expressed-through-art-and-naming; no printed family field",
+    "finish": "visual-material-only; no finish text or icon",
+    "combatInformation": false
+  },
+  "art": {
+    "front": "moon-whale-b-review-v2.png",
+    "back": "astral-series-back-review-v1.png",
+    "source": "built-in image_gen",
+    "frontPrompt": "moon-whale-b-review-v2.prompt.txt",
+    "backPrompt": "astral-series-back-review-v1.prompt.txt",
+    "limitations": "Flattened visual review images; production text, frames and material masks still need separate assets. Demo unchanged."
+  }
+}
