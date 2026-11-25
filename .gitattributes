@@ -1,0 +1,2 @@
+# Store batch scripts with normalized Git text; check out CRLF on Windows.
+*.cmd text eol=crlf

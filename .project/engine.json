@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "engine": {
+    "name": "Godot .NET",
+    "version": "4.7.1.stable.mono",
+    "build": "a13da4feb",
+    "sdk": "Godot.NET.Sdk/4.7.1",
+    "targetFramework": "net8.0",
+    "renderer": "gl_compatibility",
+    "language": "C#"
+  },
+  "framework": {
+    "name": "BaX",
+    "version": "0.1.5",
+    "commit": "eeb0ffc4c2043009942e767b53873efb98363759",
+    "path": "godot/third_party/BaX"
+  },
+  "milestone": "three-card-godot-study",
+  "saveSchema": 1
+}

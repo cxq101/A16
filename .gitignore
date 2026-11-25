@@ -1,7 +1,5 @@
 # Local dependencies, tools and credentials
-node_modules/
 .openai/
-.playwright-cli/
 .env
 .env.*
 !.env.example
@@ -15,4 +13,8 @@ Thumbs.db
 /work/*
 !/work/.gitkeep
 
-# dist contains hand-written prototype sources; do not ignore it.
+
+# Godot/.NET generated caches
+.godot/
+**/bin/
+**/obj/

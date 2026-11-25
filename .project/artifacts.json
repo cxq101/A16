@@ -1,62 +1,78 @@
 {
-  "schemaVersion": 1,
-  "updatedAt": "2026-11-24",
+  "schemaVersion": 2,
+  "updatedAt": "2026-11-25",
   "pathBase": "project-root",
   "latestReviewSet": "handpainted-hero-focus",
   "approvedSet": null,
-  "demoUsesGeneratedReviewImages": false,
   "sets": [
-    {
-      "id": "full-art-b-original",
-      "status": "superseded-information",
-      "files": [
-        "fragment-demo/art-proposals/moon-whale/moon-whale-b-review-v1.png",
-        "fragment-demo/art-proposals/moon-whale/moon-whale-b-review-v1.json",
-        "fragment-demo/art-proposals/moon-whale/moon-whale-b-review-v1.prompt.txt"
-      ],
-      "notes": "旧系列正面、属性与编号分母已废止。"
-    },
-    {
-      "id": "full-art-b-information-revision",
-      "status": "review-only-not-final",
-      "files": [
-        "fragment-demo/art-proposals/moon-whale/moon-whale-b-review-v2.png",
-        "fragment-demo/art-proposals/moon-whale/moon-whale-b-review-v2.json",
-        "fragment-demo/art-proposals/moon-whale/moon-whale-b-review-v2.prompt.txt",
-        "fragment-demo/art-proposals/moon-whale/astral-series-back-review-v1.png",
-        "fragment-demo/art-proposals/moon-whale/astral-series-back-review-v1.prompt.txt",
-        "fragment-demo/art-proposals/moon-whale/current.json"
-      ],
-      "notes": "子目录 current.json 是这一阶段的单卡审阅指针，不是最终批准指针。"
-    },
-    {
-      "id": "rarity-initial",
-      "status": "historical-study",
-      "manifest": "fragment-demo/art-proposals/moon-whale/rarity-study-v1/manifest.json",
-      "notes": "三种品质与不同鲸形态的首次研究。"
-    },
-    {
-      "id": "rarity-wide-frame",
-      "status": "historical-study",
-      "manifest": "fragment-demo/art-proposals/moon-whale/rarity-study-v2-wide-frame/manifest.json",
-      "notes": "加宽边框、强化品质的研究。"
-    },
-    {
-      "id": "handpainted-initial",
-      "status": "historical-study",
-      "manifest": "fragment-demo/art-proposals/moon-whale/style-study-handpainted-v1/manifest.json",
-      "notes": "手绘动画质感试验，不代表最终画风确认。"
-    },
     {
       "id": "handpainted-hero-focus",
       "status": "visual-review-not-approved",
-      "manifest": "fragment-demo/art-proposals/moon-whale/style-study-handpainted-v2-hero-focus/manifest.json",
+      "manifest": "godot/assets/source/manifest.json",
       "files": [
-        "fragment-demo/art-proposals/moon-whale/style-study-handpainted-v2-hero-focus/common.png",
-        "fragment-demo/art-proposals/moon-whale/style-study-handpainted-v2-hero-focus/rare.png",
-        "fragment-demo/art-proposals/moon-whale/style-study-handpainted-v2-hero-focus/legendary.png"
+        "godot/assets/common.png",
+        "godot/assets/rare.png",
+        "godot/assets/legendary.png"
       ],
-      "notes": "最新待审阅；未选择最终稿、未接入 Demo、未拆分生产图层。"
+      "notes": "当前三张主体突出效果稿已用于 Godot 样板，未批准最终生产美术。"
+    },
+    {
+      "id": "astral-series-back",
+      "status": "visual-review-not-approved",
+      "files": [
+        "godot/assets/back.png",
+        "godot/assets/source/astral-series-back.prompt.txt"
+      ],
+      "notes": "系列徽记卡背与原始提示词。"
+    }
+  ],
+  "godotStudy": {
+    "usesReviewImages": true,
+    "approved": false,
+    "sourceSet": "handpainted-hero-focus",
+    "runtimeAssets": [
+      "godot/assets/common.png",
+      "godot/assets/rare.png",
+      "godot/assets/legendary.png",
+      "godot/assets/back.png"
+    ]
+  },
+  "integrity": [
+    {
+      "path": "godot/assets/common.png",
+      "sha256": "b2600c5694b628e187590ebe3e2b92a6b22038acdeaeebad5f07550667f1a676"
+    },
+    {
+      "path": "godot/assets/rare.png",
+      "sha256": "25ca51e471b34e0a5738ef0c141764a7c85d0919dde6b052c6cbf71a0cfa3b67"
+    },
+    {
+      "path": "godot/assets/legendary.png",
+      "sha256": "191cef49bcaaf50baa695ab98db2da5c2858a22a20f2aff88538dfde577ec2be"
+    },
+    {
+      "path": "godot/assets/back.png",
+      "sha256": "3a2a511f591c5afb06b717fc467db939e53f349e00f576ea9912d0ef3aa84e8d"
+    },
+    {
+      "path": "godot/assets/source/common.prompt.txt",
+      "sha256": "1c9275096f7fab13ee738f1f145c7a038d1ed2c6791c9a263a492838ebc0330a"
+    },
+    {
+      "path": "godot/assets/source/rare.prompt.txt",
+      "sha256": "8efaeab75c2460776b09d287c9914b31b9d9d4ba16119feb76caa020fedeee16"
+    },
+    {
+      "path": "godot/assets/source/legendary.prompt.txt",
+      "sha256": "e17a4b7742de638d4a231d57b8e277ca704adf189645f20792a0fc2249687c4f"
+    },
+    {
+      "path": "godot/assets/source/astral-series-back.prompt.txt",
+      "sha256": "5ad96cb1f9487d8d9a1c5e13b5035545d00cbab7e7abc670a77b4c17e4b954fd"
+    },
+    {
+      "path": "godot/assets/source/manifest.json",
+      "sha256": "076999187a02238b9e25cd9de65a0fdfcc64c77447c9b65c5a26e042f10001e8"
     }
   ]
 }

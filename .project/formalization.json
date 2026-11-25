@@ -2,7 +2,11 @@
   "schemaVersion": 1,
   "standardVersion": "1.0.0",
   "phase": "formalized",
-  "framework": null,
+  "framework": {
+    "name": "BaX",
+    "versionSource": ".project/engine.json",
+    "boundaryDocument": "docs/PROJECT.md"
+  },
   "directories": [
     {
       "path": ".project",
@@ -10,23 +14,7 @@
     },
     {
       "path": "docs",
-      "purpose": "现行设计、决策、交接与验证"
-    },
-    {
-      "path": "docs/validation",
-      "purpose": "注明日期与范围的验证证据"
-    },
-    {
-      "path": "fragment-demo",
-      "purpose": "保留既有浏览器原型与历史材料"
-    },
-    {
-      "path": "fragment-demo/dist",
-      "purpose": "混合布局中的手写源码与部分生成物，逐文件维护"
-    },
-    {
-      "path": "fragment-demo/art-proposals",
-      "purpose": "效果图研究与生成批次"
+      "purpose": "PROJECT.md 维护项目规则与记录，ART.md 独立维护美术设计与制作"
     },
     {
       "path": "outputs",
@@ -35,48 +23,82 @@
     {
       "path": "work",
       "purpose": "既有临时工作预留目录，无权威职责"
+    },
+    {
+      "path": "godot",
+      "purpose": "Godot .NET 三维流程样板；当前为三卡效果验证，不等同十二卡完整验证版"
+    },
+    {
+      "path": "godot/game",
+      "purpose": "卡牌状态、整理规则、存档载荷与领域校验"
+    },
+    {
+      "path": "godot/world",
+      "purpose": "场景、第一人称、桌面交互、卡牌几何和材质"
+    },
+    {
+      "path": "godot/assets",
+      "purpose": "唯一现行卡图、卡背与 source 中的提示词和来源清单，无浏览器素材依赖"
+    },
+    {
+      "path": "godot/third_party/BaX",
+      "purpose": "固定 v0.1.5 Git 子模块，公共机制；禁止业务逻辑侵入"
+    },
+    {
+      "path": "godot/assets/source",
+      "purpose": "当前保留美术的原始提示词与清单，.gdignore 隔离非运行资源"
     }
   ],
   "documents": [
     {
       "topic": "project-scope",
-      "path": "docs/project-brief.md"
+      "path": "docs/PROJECT.md",
+      "section": "scope"
     },
     {
       "topic": "gameplay-and-progression",
-      "path": "docs/game-design.md"
+      "path": "docs/PROJECT.md",
+      "section": "gameplay"
     },
     {
       "topic": "card-specification",
-      "path": "docs/card-spec.md"
+      "path": "docs/PROJECT.md",
+      "section": "cards"
     },
     {
       "topic": "art-direction",
-      "path": "docs/art-direction.md"
+      "path": "docs/ART.md",
+      "section": "art"
     },
     {
       "topic": "interaction",
-      "path": "docs/interaction-design.md"
+      "path": "docs/PROJECT.md",
+      "section": "interaction"
     },
     {
       "topic": "technical-baseline",
-      "path": "docs/technical-baseline.md"
+      "path": "docs/PROJECT.md",
+      "section": "technical"
     },
     {
       "topic": "decision-history",
-      "path": "docs/decisions.md"
+      "path": "docs/PROJECT.md",
+      "section": "decisions"
     },
     {
       "topic": "reference-evidence",
-      "path": "docs/references.md"
+      "path": "docs/PROJECT.md",
+      "section": "references"
     },
     {
       "topic": "governance",
-      "path": "docs/governance.md"
+      "path": "docs/PROJECT.md",
+      "section": "governance"
     },
     {
       "topic": "handoff",
-      "path": "docs/handoff.md"
+      "path": "docs/PROJECT.md",
+      "section": "handoff"
     },
     {
       "topic": "art-selection-status",
@@ -84,7 +106,8 @@
     },
     {
       "topic": "migration-record",
-      "path": "docs/validation/2026-11-24-migration.md"
+      "path": "docs/PROJECT.md",
+      "section": "migration"
     }
   ],
   "versions": [
@@ -104,14 +127,29 @@
       "selector": "$.schemaVersion"
     },
     {
-      "object": "prototype-dependencies",
-      "source": "fragment-demo/package.json",
-      "selector": "$.dependencies"
+      "object": "godot-engine",
+      "source": ".project/engine.json",
+      "selector": "$.engine.version"
     },
     {
-      "object": "prototype-resolved-dependencies",
-      "source": "fragment-demo/package-lock.json",
-      "selector": "$.packages"
+      "object": "bax-version",
+      "source": ".project/engine.json",
+      "selector": "$.framework.version"
+    },
+    {
+      "object": "bax-pinned-revision",
+      "source": ".project/engine.json",
+      "selector": "$.framework.commit"
+    },
+    {
+      "object": "godot-sdk",
+      "source": "godot/A16Study.csproj",
+      "selector": "Project/@Sdk"
+    },
+    {
+      "object": "godot-study-save-schema",
+      "source": ".project/engine.json",
+      "selector": "$.saveSchema"
     }
   ],
   "requiredFiles": [
@@ -119,37 +157,27 @@
     "README.md",
     ".project/formalization.json",
     ".project/artifacts.json",
-    "docs/project-brief.md",
-    "docs/game-design.md",
-    "docs/card-spec.md",
-    "docs/art-direction.md",
-    "docs/interaction-design.md",
-    "docs/technical-baseline.md",
-    "docs/decisions.md",
-    "docs/references.md",
-    "docs/governance.md",
-    "docs/handoff.md",
-    "docs/validation/2026-11-24-documentation.md",
+    "docs/PROJECT.md",
     ".project/validate-docs.cjs",
-    "docs/validation/2026-11-24-migration.md",
-    ".project/migration-source.json",
     "outputs/.gitkeep",
     "work/.gitkeep",
-    ".gitignore"
+    ".gitignore",
+    "docs/ART.md",
+    ".project/engine.json",
+    ".gitmodules",
+    "godot/project.godot",
+    "godot/A16Study.csproj",
+    "godot/scenes/study.tscn",
+    "godot/game/Session.cs",
+    "godot/world/Study.cs",
+    "godot/world/CardItem.cs",
+    "godot/world/Room.cs",
+    "godot/launch.cmd",
+    "godot/assets/source/manifest.json",
+    "godot/assets/source/.gdignore",
+    ".gitattributes"
   ],
   "exceptions": [
-    {
-      "rule": "core-library",
-      "reason": "生产引擎未定，现有浏览器原型不强制接入核心库；选型时优先评估 BaX 适配性",
-      "scope": "当前文档接入与浏览器原型",
-      "reviewWhen": "生产引擎与公共机制设计确定时"
-    },
-    {
-      "rule": "directory-layout",
-      "reason": "保留历史原型混合布局，dist 含手写源码，不机械迁移",
-      "scope": "fragment-demo",
-      "reviewWhen": "计划迁移正式源码或改构建流程时"
-    },
     {
       "rule": "production-versioning",
       "reason": "未有产品发布、正式资产包和存档架构，不补造统一版本",
@@ -161,6 +189,18 @@
       "reason": "本机 Python 应用别名不可运行，本次以可复跑 Node 检查覆盖接入结构和链接，不宣称技能原版 Python 检查已执行",
       "scope": "本次文档检查",
       "reviewWhen": "可用 Python 环境具备时补跑技能检查"
+    },
+    {
+      "rule": "godot-study-scope",
+      "reason": "用户要求先用 Godot 看效果，本轮三卡样板验证引擎与主要操作；完整十二卡验证版尚待扩展",
+      "scope": "godot",
+      "reviewWhen": "效果评审后进入十二卡完整验证版时"
+    },
+    {
+      "rule": "framework-compatibility-scope",
+      "reason": "BaX v0.1.5 固定接入 Godot 4.7.1 .NET，本轮仅验收实际使用的存档和节点/Tween 辅助，不宣称框架全部适配器回归",
+      "scope": "godot/third_party/BaX 消费接入",
+      "reviewWhen": "采用更多框架机制或升级引擎、核心库时"
     }
   ]
 }

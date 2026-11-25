@@ -1,0 +1,3 @@
+[submodule "godot/third_party/BaX"]
+	path = godot/third_party/BaX
+	url = https://github.com/cxq101/BaX.git

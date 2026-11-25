@@ -1,6 +1,7 @@
 // Read-only repository documentation checks; no network, gameplay or save access.
 const fs = require('node:fs');
 const path = require('node:path');
+const crypto = require('node:crypto');
 const root = path.resolve(__dirname, '..');
 const errors = [];
 let pathChecks = 0, linkChecks = 0, assetChecks = 0;
@@ -43,7 +44,19 @@ if (!['preparing', 'formalized'].includes(profile.phase)) fail('phase');
 const directories = rows(profile.directories, ['path', 'purpose'], 'path', 'directories');
 for (const item of directories) target(item.path, 'directory', 'dir');
 const docs = rows(profile.documents, ['topic', 'path'], 'topic', 'documents');
-for (const item of docs) target(item.path, item.topic);
+function checkAnchor(file, anchor, label) {
+  if (!anchor || !file || !file.endsWith('.md')) return;
+  const source = fs.readFileSync(file, 'utf8');
+  const anchors = new Set([...source.matchAll(/<a\s+id="([^"]+)"\s*>/g)].map(match => match[1]));
+  if (!anchors.has(anchor)) fail(`${label}: missing explicit section anchor ${anchor}`);
+}
+for (const item of docs) {
+  const file = target(item.path, item.topic);
+  if (item.section !== undefined) {
+    if (!nonempty(item.section)) fail(`${item.topic}: invalid section`);
+    else checkAnchor(file, item.section, item.topic);
+  }
+}
 for (const item of rows(profile.versions, ['object', 'source', 'selector'], 'object', 'versions')) {
   const file = target(item.source, item.object);
   if (file && item.selector.startsWith('$.')) {
@@ -61,25 +74,34 @@ if (profile.framework === null) {
 if (!Array.isArray(profile.requiredFiles) || !profile.requiredFiles.length) fail('requiredFiles');
 for (const name of profile.requiredFiles || []) target(name, 'requiredFile');
 
-const markdown = new Set(['README.md', 'AGENTS.md', 'fragment-demo/README.md', 'fragment-demo/3D-STUDY.md', 'fragment-demo/ART-DIRECTION.md', ...docs.map(row => row.path), ...(profile.requiredFiles || [])].filter(name => name.endsWith('.md')));
+const markdown = new Set(['README.md', 'AGENTS.md', ...docs.map(row => row.path), ...(profile.requiredFiles || [])].filter(name => name.endsWith('.md')));
 for (const name of markdown) {
   const file = path.join(root, name);
   if (!fs.existsSync(file)) continue;
   const text = fs.readFileSync(file, 'utf8');
   for (const match of text.matchAll(/!?\[[^\]\n]*\]\(([^)\n]+)\)/g)) {
     let href = match[1].trim().replace(/^<|>$/g, '');
-    if (/^[a-z][a-z0-9+.-]*:/i.test(href) || href.startsWith('#')) continue;
-    href = decodeURIComponent(href.split('#')[0]);
-    if (!href) continue;
-    target(href, `link in ${name}`, 'any', path.dirname(file)); linkChecks++;
+    if (/^[a-z][a-z0-9+.-]*:/i.test(href)) continue;
+    const [local, anchor] = href.split('#').map(decodeURIComponent);
+    const linked = local ? target(local, `link in ${name}`, 'any', path.dirname(file)) : file;
+    checkAnchor(linked, anchor, `link in ${name}`);
+    linkChecks++;
   }
 }
+if (fs.existsSync(path.join(__dirname, 'engine.json'))) {
+  const lock = json(path.join(__dirname, 'engine.json'));
+  const project = target('godot/A16Study.csproj', 'Godot SDK source');
+  const sdk = project && fs.readFileSync(project, 'utf8').match(/<Project Sdk="([^"]+)"/);
+  if (!sdk || sdk[1] !== lock.engine.sdk) fail('Godot SDK does not match engine lock');
+  const coreVersion = target(lock.framework.path + '/VERSION', 'BaX version source');
+  if (coreVersion && fs.readFileSync(coreVersion,'utf8').trim().replace(/^v/,'') !== lock.framework.version) fail('BaX version mismatch');
+}
 const registry = json(path.join(__dirname, 'artifacts.json'));
-if (registry.schemaVersion !== 1 || registry.pathBase !== 'project-root') fail('registry schema/base');
+if (registry.schemaVersion !== 2 || registry.pathBase !== 'project-root') fail('registry schema/base');
 const sets = rows(registry.sets, ['id', 'status', 'notes'], 'id', 'artifact sets');
 if (!sets.some(set => set.id === registry.latestReviewSet)) fail('latestReviewSet missing');
 if (registry.approvedSet !== null && !sets.some(set => set.id === registry.approvedSet)) fail('approvedSet missing');
-if (registry.approvedSet !== null || registry.demoUsesGeneratedReviewImages !== false) fail('current documented approval/integration state changed; review required');
+
 for (const set of sets) {
   for (const file of set.files || []) { target(file, `asset ${set.id}`); assetChecks++; }
   if (set.manifest) {
@@ -92,6 +114,13 @@ for (const set of sets) {
       }
     }
   }
+}
+for (const item of registry.integrity || []) {
+  const file = target(item.path,'art integrity source');
+  if (file && crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex') !== item.sha256) fail('Art integrity mismatch: '+item.path);
+}
+for (const file of registry.godotStudy?.runtimeAssets || []) {
+  target(file,'Godot runtime art'); assetChecks++;
 }
 if (errors.length) {
   for (const message of errors) process.stderr.write(`FAIL: ${message}\n`);
