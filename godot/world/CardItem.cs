@@ -6,6 +6,7 @@ public partial class CardItem : RigidBody3D {
     public ItemState State;
     public Vector2 Size;
     Node3D visual;
+    CollisionPolygon3D collision;
     ShaderMaterial front;
     Image mask;
     ImageTexture maskTexture;
@@ -14,10 +15,10 @@ public partial class CardItem : RigidBody3D {
     public void Setup(ItemState state) {
         State=state;Size=state.Piece<0?new(CardWidth,CardHeight):new(CardWidth/2,CardHeight/3);
         Name="Card_"+state.Id.Replace(":","_");Mass=.025f;LockRotation=true;LinearDamp=1.7f;AngularDamp=2;
-        CollisionLayer=2;CollisionMask=3;PhysicsMaterialOverride=new PhysicsMaterial{Friction=.85f,Bounce=.03f};
+        ContinuousCd=true;CollisionLayer=2;CollisionMask=3;PhysicsMaterialOverride=new PhysicsMaterial{Friction=.85f,Bounce=.03f};
         visual=new Node3D();AddChild(visual);
         var polygon=Outline(state.Piece);
-        AddChild(new CollisionPolygon3D{Polygon=polygon,Depth=.025f,Rotation=new(Mathf.Pi/2,0,0)});
+        collision=new CollisionPolygon3D{Polygon=polygon,Depth=.025f,Rotation=new(state.Front?Mathf.Pi/2:-Mathf.Pi/2,0,0)};AddChild(collision);
         mask=Image.CreateEmpty(64,64,false,Image.Format.Rgba8);mask.Fill(Colors.Black);
         if(state.CleanMask.Length>0)try{mask.LoadPngFromBuffer(Convert.FromBase64String(state.CleanMask));}catch{mask.Fill(Colors.Black);}
         for(int x=0;x<64;x++)for(int y=0;y<64;y++)if(mask.GetPixel(x,y).R>.5f)painted++;
@@ -77,7 +78,7 @@ ALBEDO=mix(paper,vec3(.19,.135,.08),grime*.91);ROUGHNESS=.65;METALLIC=.025;}";
         }
         var arrays=new Godot.Collections.Array();arrays.Resize((int)Mesh.ArrayType.Max);arrays[(int)Mesh.ArrayType.Vertex]=vertices.ToArray();arrays[(int)Mesh.ArrayType.Normal]=normals.ToArray();arrays[(int)Mesh.ArrayType.Index]=index.ToArray();var mesh=new ArrayMesh();mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles,arrays);return mesh;
     }
-    public void Face(bool frontSide) {State.Front=frontSide;front.SetShaderParameter("dirty",State.Dirty);visual.Rotation=new(frontSide?0:Mathf.Pi,0,0);}
+    public void Face(bool frontSide) {State.Front=frontSide;collision.Rotation=new(frontSide?Mathf.Pi/2:-Mathf.Pi/2,0,0);front.SetShaderParameter("dirty",State.Dirty);visual.Rotation=new(frontSide?0:Mathf.Pi,0,0);}
     public float Paint(Vector3 point) {
         if(!State.Front||!State.Dirty)return 1;
         var p=ToLocal(point);int cx=(int)((p.X/Size.X+.5f)*63),cy=(int)((p.Z/Size.Y+.5f)*63);
@@ -89,5 +90,8 @@ ALBEDO=mix(paper,vec3(.19,.135,.08),grime*.91);ROUGHNESS=.65;METALLIC=.025;}";
         if(ratio>=.72f){State.Dirty=false;front.SetShaderParameter("dirty",false);mask.Fill(Colors.White);ratio=1;}
         maskTexture.Update(mask);State.CleanMask=Convert.ToBase64String(mask.SavePngToBuffer());return ratio;
     }
+    public Vector2[] WorldOutline() => Array.ConvertAll(Outline(State.Piece),p=> {
+        var world=visual.ToGlobal(new Vector3(p.X,0,p.Y));return new Vector2(world.X,world.Z);
+    });
     public void SetPlace(Vector3 position,bool frozen) {Freeze=frozen;LinearVelocity=Vector3.Zero;AngularVelocity=Vector3.Zero;GlobalPosition=position;}
 }

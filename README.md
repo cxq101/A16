@@ -14,7 +14,7 @@
 
 ## Godot 试玩
 
-[一键启动](godot/launch.cmd) · [Godot 工程](godot/project.godot) · [当前实现范围](docs/PROJECT.md#progress) · [运行与检查](docs/TECHNICAL.md#technical)
+[一键启动](start.bat) · [Godot 工程](godot/project.godot) · [当前实现范围](docs/PROJECT.md#progress) · [运行与检查](docs/TECHNICAL.md#technical)
 
 使用 Godot .NET 和 C#，核心库为固定版本的 BaX。新克隆先初始化子模块，版本与依赖以技术文档和机器清单为准。当前为三卡样板，完整十二卡验证版仍待扩展。
 

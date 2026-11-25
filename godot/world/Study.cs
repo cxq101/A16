@@ -15,6 +15,8 @@ public partial class Study : Node3D {
     CardItem held;
     Vector3 origin;
     string originPlace;
+    bool dragCandidate;
+    Vector2 grabMouse;
     Label status,hint,legend,pageLabel;
     HBoxContainer targets;
     PanelContainer pausePanel;
@@ -37,7 +39,7 @@ public partial class Study : Node3D {
         GetTree().AutoAcceptQuit=false;
         capture=args.Contains("--capture")||args.Contains("--capture-room");game=new Session((int)(Time.GetTicksMsec()%100000));
         store=new(ProjectSettings.GlobalizePath("user://godot-study-v1.json"),new StudyCodec());
-        if(!capture && !args.Contains("--no-save") && !args.Contains("--flow-test")) {
+        if(!capture && !args.Contains("--no-save") && !args.Contains("--flow-test") && !args.Contains("--floor-test") && !args.Contains("--desk-test") && !args.Contains("--archive-test")) {
             var read=store.Inspect();
             if(read.CanContinue)game.Restore(read.Snapshot);
             else if(read.Status!=SaveStatus.Missing){canSave=false;ShowNotice("样板存档不可读取，本轮不会覆盖："+read.Status);}
@@ -51,6 +53,9 @@ public partial class Study : Node3D {
         UpdateStations();
         if(capture){if(!args.Contains("--capture-room")){StageCapture();SetDesk(true);}CaptureSoon();}else Input.MouseMode=Input.MouseModeEnum.Captured;
         if(args.Contains("--flow-test"))FlowTest();
+        if(args.Contains("--floor-test"))FloorTest();
+        if(args.Contains("--desk-test"))DeskTest();
+        if(args.Contains("--archive-test"))ArchiveTest();
     }
     void BuildPlayer() {
         player=new CharacterBody3D{Position=new(game.Data.Player[0],game.Data.Player[1],game.Data.Player[2]),ProcessMode=ProcessModeEnum.Pausable,CollisionLayer=4,CollisionMask=1};
@@ -87,6 +92,15 @@ public partial class Study : Node3D {
     }
     void Spawn(ItemState state) {
         if(state.Place=="held")state.Place="desk";
+        // Older saves may contain loose cards below the rug, which used to have no collider.
+        if(state.Place is "floor" or "desk" && Mathf.Abs(state.Position[0])<2.6f
+            && state.Position[2]>-.4f && state.Position[2]<2.9f && state.Position[1]<.06f)
+            state.Position[1]=.06f;
+        if(state.Place=="desk" && state.Position[1]>.8f) {
+            var size=state.Piece<0?new Vector2(CardItem.CardWidth,CardItem.CardHeight):new Vector2(CardItem.CardWidth/2,CardItem.CardHeight/3);
+            float top=Room.DeskSurface(new(state.Position[0],state.Position[1],state.Position[2]),size,state.Rotation[1]);
+            if(top>0 && state.Position[1]<top+.02f)state.Position[1]=top+.045f;
+        }
         var card=new CardItem();itemRoot.AddChild(card);card.Setup(state);items.Add(state.Id,card);Apply(card);
     }
     Vector3 Slot(int p)=>PuzzlePoint+new Vector3((p%2-.5f)*CardItem.CardWidth/2,0,(p/2-1)*CardItem.CardHeight/3);
@@ -102,7 +116,7 @@ public partial class Study : Node3D {
         ghost.MaterialOverride=new StandardMaterial3D{AlbedoTexture=GD.Load<Texture2D>($"res://assets/{Session.Art[game.Data.Target]}.png"),AlbedoColor=new Color(1,1,1,.23f),Transparency=BaseMaterial3D.TransparencyEnum.Alpha,Roughness=.9f};
         binder.Visible=game.Data.Archived.Contains(game.Data.Page);binder.MaterialOverride=new StandardMaterial3D{AlbedoTexture=GD.Load<Texture2D>($"res://assets/{Session.Art[game.Data.Page]}.png"),Roughness=.55f};
         foreach(var item in items.Values)if(item.State.Place is "puzzle" or "archived" or "assembled")Apply(item);
-        if(pageLabel!=null)pageLabel.Text=$"拼接：{Session.Names[game.Data.Target]}   ·   收卡设备 第 {game.Data.Page+1}/3 页";
+        if(pageLabel!=null)pageLabel.Text=$"拼接：{Session.Names[game.Data.Target]}   ·   收卡设备 第 {game.Data.Page+1}/3 页：{Session.Names[game.Data.Page]}";
     }
     public override void _PhysicsProcess(double delta) {
         if(game==null||paused||atDesk)return;
@@ -121,7 +135,7 @@ public partial class Study : Node3D {
         status.Text=$"容器 {game.Carried}/{game.Capacity}   ·   已归档 {game.Data.Archived.Count}/3"+(game.Data.Archived.Count==3?"   ·   整理完成，可自由查看":"");
         targets.Visible=atDesk;
         legend.Text=atDesk?"左键 拿取/放置/按住擦拭   ·   右键 翻面   ·   B 整批倒出   ·   Tab 切换拼图   ·   PgUp/PgDn 翻页   ·   F 快捷归位   ·   I 欣赏   ·   E 离开":"WASD 移动   ·   鼠标 观察   ·   左键 收集   ·   F 翻面   ·   E 工作台   ·   H 位置提示   ·   Esc 暂停";
-        hint.Text=noticeTimer>0?notice:held!=null?"拿着 "+Session.Names[held.State.Card]+(held.State.Piece>=0?$" · 碎片 {held.State.Piece+1}":""):aim!=null?Session.Names[aim.State.Card]+(aim.State.Dirty?" · 有污渍":" · 干净")+(aim.State.Front?" · 正面":" · 背面")+(aim.State.Place=="clean"?" · 按住擦拭 / Shift＋左键拿起":""):atDesk?"把物品放到清理区、拼接区或收卡设备":"在收藏室寻找散落的卡牌与碎片";
+        hint.Text=noticeTimer>0?notice:held!=null?HeldMessage():aim!=null?Session.Names[aim.State.Card]+(aim.State.Dirty?" · 有污渍":" · 干净")+(aim.State.Front?" · 正面":" · 背面")+(aim.State.Place=="clean"?" · 按住擦拭 / Shift＋左键拿起":""):atDesk?"把物品放到清理区、拼接区或收卡设备":"在收藏室寻找散落的卡牌与碎片";
         saveTimer+=(float)delta;if(saveTimer>2){saveTimer=0;Save();}
     }
     public override void _UnhandledInput(InputEvent input) {
@@ -142,7 +156,13 @@ public partial class Study : Node3D {
         if(paused)return;
         if(input is InputEventMouseMotion mouse&&!atDesk) {yaw-=mouse.Relative.X*.0024f;pitch=Mathf.Clamp(pitch-mouse.Relative.Y*.0024f,-1.4f,1.3f);player.Rotation=new(0,yaw,0);roomCamera.Rotation=new(pitch,0,0);}
         if(input is InputEventMouseButton button) {
-            if(button.ButtonIndex==MouseButton.Left&&!button.Pressed)painting=false;
+
+            if(button.ButtonIndex==MouseButton.Left&&!button.Pressed) {
+                painting=false;
+                bool release=dragCandidate;dragCandidate=false;
+                if(release&&held!=null&&!busy&&button.Position.DistanceTo(grabMouse)>8)Drop();
+                return;
+            }
             if(!button.Pressed||busy)return;
             if(button.ButtonIndex==MouseButton.Right&&atDesk){Flip(held??Ray().Item1);return;}
             if(button.ButtonIndex!=MouseButton.Left)return;
@@ -151,7 +171,7 @@ public partial class Study : Node3D {
             var (card,point)=Ray();if(card==null)return;
             if(card.State.Place=="clean"&&card.State.Front&&card.State.Dirty&&!button.ShiftPressed){painting=true;card.Paint(point);return;}
             if(card.State.Place=="puzzle"){ShowNotice("正确拼入的碎片已经固定");return;}
-            Take(card);
+            grabMouse=button.Position;dragCandidate=true;Take(card);
         }
     }
     (CardItem,Vector3) Ray() {
@@ -165,7 +185,16 @@ public partial class Study : Node3D {
     void Flip(CardItem item) {if(item==null||item.State.Place is "puzzle" or "assembled" or "archived")return;item.Face(!item.State.Front);Tone(410);Save();}
     void Dump() {if(held!=null||busy)return;int n=0;foreach(var item in items.Values.Where(c=>c.State.Place=="container")){item.State.Place="desk";item.Visible=true;item.CollisionLayer=2;item.SetPlace(new(-2.9f+GD.Randf()*5.8f,1.30f+n*.045f,-1.68f+GD.Randf()*.23f),false);n++;}ShowNotice(n>0?$"已倒出 {n} 个对象，可自由整理":"容器目前为空");Tone(330);Save();}
     void Take(CardItem item) {origin=item.GlobalPosition;originPlace=item.State.Place;held=item;item.State.Place="held";item.Freeze=true;item.CollisionLayer=0;}
-    void ReturnHeld(string message) {if(held==null)return;var card=held;held=null;card.State.Place=originPlace;card.SetPlace(origin,originPlace=="clean");card.CollisionLayer=2;if(message.Length>0)ShowNotice(message);}
+    void ReturnHeld(string message) {dragCandidate=false;if(held==null)return;var card=held;held=null;card.State.Place=originPlace;card.SetPlace(origin,originPlace=="clean");card.CollisionLayer=2;if(message.Length>0)ShowNotice(message);}
+    string HeldMessage() {
+        var p=TablePoint();
+        if(Mathf.Abs(p.X-BinderPoint.X)<.85f&&Mathf.Abs(p.Z-BinderPoint.Z)<.9f) {
+            if(!game.CanArchive(held.State,out string why))return why;
+            if(game.Data.Page!=held.State.Card)return $"本页收录：{Session.Names[game.Data.Page]} · PgUp/PgDn 翻页，或 F 快捷归位";
+            return "可以归档 · 左键放下，或拖拽后松开左键";
+        }
+        return "拿着 "+Session.Names[held.State.Card]+(held.State.Piece>=0?$" · 碎片 {held.State.Piece+1}":"")+" · 左键放下 / 拖拽松手";
+    }
     void Drop() {
         var p=TablePoint();var item=held;
         if(Mathf.Abs(p.X-CleanPoint.X)<.75f&&Mathf.Abs(p.Z-CleanPoint.Z)<.86f) {
@@ -181,7 +210,7 @@ public partial class Study : Node3D {
         held=null;item.State.Place="desk";item.CollisionLayer=2;item.SetPlace(p+Vector3.Up*.12f,false);Save();
     }
     void ArchiveHeld(bool quick) {
-        if(busy||held==null)return;var item=held;
+        if(busy||held==null)return;dragCandidate=false;var item=held;
         if(!game.CanArchive(item.State,out string why)){ReturnHeld(why);return;}
         if(!quick&&game.Data.Page!=item.State.Card){ReturnHeld("当前页不是这张卡的归档位置");return;}
         game.Data.Page=item.State.Card;UpdateStations();busy=true;
@@ -189,7 +218,7 @@ public partial class Study : Node3D {
         motion.TweenCallback(Callable.From(()=>{int before=game.Data.Archived.Count;game.Archive(item.State,out _);held=null;busy=false;Apply(item);UpdateStations();Tone(1040);ShowNotice(game.Data.Archived.Count==3?"全部归档完成！可以继续自由查看":before==1?"归档成功 · 容器容量提升至 18":"归档成功，空位已填满");Save();}));
     }
     void Hint() {var candidate=game.Data.Items.Where(i=>!game.Data.Archived.Contains(i.Card)&&i.Place is not ("archived" or "assembled")).OrderBy(i=>i.Place=="puzzle"?1:0).FirstOrDefault();if(candidate==null){ShowNotice("所有卡牌已正确归档");return;}var item=items[candidate.Id];hintLight.GlobalPosition=(candidate.Place=="container"?new Vector3(-4.1f,.7f,-2.1f):item.GlobalPosition)+Vector3.Up*.2f;hintTimer=3;ShowNotice($"{Session.Names[candidate.Card]} · 位于 "+(candidate.Place=="container"?"容器内":candidate.Place=="floor"?"房间地面":candidate.Place=="puzzle"?"未完成拼图":"工作台上"),3);}
-    void Pause(bool value) {paused=value;GetTree().Paused=value;pausePanel.Visible=value;painting=false;Input.MouseMode=value||atDesk?Input.MouseModeEnum.Visible:Input.MouseModeEnum.Captured;if(motion!=null&&motion.IsValid()){if(value)motion.Pause();else motion.Play();}if(value)Save();}
+    void Pause(bool value) {paused=value;dragCandidate=false;GetTree().Paused=value;pausePanel.Visible=value;painting=false;Input.MouseMode=value||atDesk?Input.MouseModeEnum.Visible:Input.MouseModeEnum.Captured;if(motion!=null&&motion.IsValid()){if(value)motion.Pause();else motion.Play();}if(value)Save();}
     void ShowNotice(string text,float seconds=2.3f){notice=text;noticeTimer=seconds;}
     void Tone(float frequency) {if(sound==null)return;byte[] bytes=new byte[2205*2];for(int i=0;i<2205;i++){short v=(short)(Math.Sin(i*frequency*Math.Tau/22050)*Math.Exp(-i/450.0)*5500);bytes[i*2]=(byte)v;bytes[i*2+1]=(byte)(v>>8);}sound.Stream=new AudioStreamWav{Format=AudioStreamWav.FormatEnum.Format16Bits,MixRate=22050,Data=bytes};sound.Play();}
     void Save() {if(!canSave||game==null)return;foreach(var item in items.Values){var p=item.GlobalPosition;item.State.Position=new[]{p.X,p.Y,p.Z};var r=item.Rotation;item.State.Rotation=new[]{r.X,r.Y,r.Z};}game.Data.Player=new[]{player.Position.X,player.Position.Y,player.Position.Z};game.Data.Yaw=yaw;game.Data.Pitch=pitch;try{game.Save(store);}catch(Exception e){canSave=false;ShowNotice("保存失败，保留现有文件："+e.Message,10);GD.PushError(e.Message);}}
@@ -241,6 +270,131 @@ public partial class Study : Node3D {
             store=new(System.IO.Path.Combine(System.IO.Path.GetTempPath(),"a16-flow-"+Guid.NewGuid(),"study.json"),new StudyCodec());canSave=true;Save();canSave=false;
             var read=store.Inspect();Check(read.CanContinue&&read.Snapshot.Archived.Count==3&&read.Snapshot.Items.Count==9,"scene snapshot restored");
             GD.Print("PASS: real scene/ray pickup, dump, stroke masks, pause tween, six-piece assembly, wrong-page rejection, quick archive, capacity and isolated scene save");GetTree().Quit(0);
+        } catch(Exception e){GD.PushError(e.ToString());GetTree().Quit(1);}
+    }
+    async void ArchiveTest() {
+        void Check(bool condition,string why){if(!condition)throw new Exception(why);}
+        async System.Threading.Tasks.Task Mouse(Vector2 position,bool? down=null) {
+            Input.WarpMouse(position);
+            await ToSignal(GetTree(),SceneTree.SignalName.ProcessFrame);
+            GetViewport().PushInput(new InputEventMouseMotion{Position=position,GlobalPosition=position},true);
+            if(down.HasValue)GetViewport().PushInput(new InputEventMouseButton{Position=position,GlobalPosition=position,ButtonIndex=MouseButton.Left,Pressed=down.Value},true);
+            await ToSignal(GetTree(),SceneTree.SignalName.ProcessFrame);
+        }
+        try {
+            SetDesk(true);
+            foreach(var item in items.Values){item.State.Place="container";Apply(item);}
+            for(int card=0;card<2;card++) {
+                var item=items.Values.Single(i=>i.State.Card==card);item.State.Place="desk";item.State.Dirty=false;item.Face(true);Apply(item);item.SetPlace(new(-1.05f,1.3f,-1.3f),true);
+                for(int n=0;n<3;n++)await ToSignal(GetTree(),SceneTree.SignalName.PhysicsFrame);
+                var start=deskCamera.UnprojectPosition(item.GlobalPosition);
+                await Mouse(start,true);await Mouse(start,false);
+                Check(held==item,"real mouse pickup failed");
+                if(card==1) {
+                    var wrongPage=deskCamera.UnprojectPosition(BinderPoint);
+                    await Mouse(wrongPage,true);await Mouse(wrongPage,false);
+                    Check(!game.Data.Archived.Contains(card)&&held==null&&notice.Contains("当前页"),"wrong page should reject with feedback");
+                    item.SetPlace(new(-1.05f,1.3f,-1.3f),true);
+                    for(int n=0;n<3;n++)await ToSignal(GetTree(),SceneTree.SignalName.PhysicsFrame);
+                    await Mouse(start,true);await Mouse(start,false);
+                    Check(held==item,"pickup after rejection failed");
+                    GetViewport().PushInput(new InputEventKey{PhysicalKeycode=Key.Pagedown,Pressed=true},true);
+                }
+                Check(game.Data.Page==card,"page key failed");
+                var end=deskCamera.UnprojectPosition(BinderPoint);
+                if(card==0){await Mouse(end);await Mouse(end,true);await Mouse(end,false);}
+                else {
+                    // Start a conventional drag from the original desk position.
+                    ReturnHeld("");item.SetPlace(new(-1.05f,1.3f,-1.3f),true);
+                    for(int n=0;n<3;n++)await ToSignal(GetTree(),SceneTree.SignalName.PhysicsFrame);
+                    await Mouse(start,true);Check(held==item,"drag pickup failed");await Mouse(end);await Mouse(end,false);
+                }
+                await ToSignal(GetTree().CreateTimer(.5),SceneTreeTimer.SignalName.Timeout);
+                Check(game.Data.Archived.Contains(card),card==0?"click-place manual archive failed":"drag-release manual archive failed");
+            }
+            GD.Print("PASS: real viewport mouse pickup, manual paging, click placement and drag-release archive; no player save loaded or written");GetTree().Quit(0);
+        }catch(Exception e){GD.PushError(e.ToString());GetTree().Quit(1);}
+    }
+    async void DeskTest() {
+        try {
+            // Repeatedly use the actual reported edge positions through manual Drop.
+            SetDesk(true);
+            var edgeCard=items.Values.Single(i=>i.State.Card==1);
+            var edgePiece=items.Values.Single(i=>i.State.Card==2&&i.State.Piece==0);
+            foreach(var other in items.Values.Where(i=>i!=edgeCard&&i!=edgePiece)){other.State.Place="container";Apply(other);}
+            for(int repeat=0;repeat<12;repeat++) {
+                foreach(var item in new[]{edgeCard,edgePiece}) {
+                    item.State.Place="desk";item.Face(repeat%2==0);Apply(item);Take(item);
+                    testPoint=item==edgeCard?new Vector3(.04915f,1.15f,-3.49775f):new Vector3(-1.64937f,1.15f,-1.62825f);
+                    Drop();testPoint=null;
+                }
+                await ToSignal(GetTree().CreateTimer(.6),SceneTreeTimer.SignalName.Timeout);
+                foreach(var item in new[]{edgeCard,edgePiece})if(item.GlobalPosition.Y+.014f<1.092f)
+                    throw new Exception("Repeated edge placement clipped: "+item.State.Id+" at "+item.GlobalPosition);
+            }
+            if(OS.GetCmdlineUserArgs().Contains("--capture-desk-test")) {
+                await ToSignal(RenderingServer.Singleton,RenderingServer.SignalName.FramePostDraw);
+                GetViewport().GetTexture().GetImage().SavePng(ProjectSettings.GlobalizePath("res://../outputs/godot-edge-regression.png"));
+            }
+            // Loose whole card straddles the mat; fragments rest on mat, binder and bare wood.
+            NodeHelpers.QueueFreeChildren(itemRoot);items.Clear();
+            foreach(var state in game.Data.Items) {
+                state.Place="container";
+                if(state.Card==0){state.Place="desk";state.Position=new[]{-2.1f,1.065f,-1.55f};}
+                if(state.Card==2&&state.Piece<3){state.Place="desk";state.Position=state.Piece switch {
+                    0=>new[]{-.4f,1.065f,-2.6f},1=>new[]{2.1f,1.065f,-2.6f},_=>new[]{-3.1f,1.065f,-2.6f}};}
+                Spawn(state);
+            }
+            SetDesk(true);
+            await ToSignal(GetTree().CreateTimer(2),SceneTreeTimer.SignalName.Timeout);
+            foreach(var item in items.Values.Where(i=>i.State.Place=="desk")) {
+                float top=item.State.Card==0||item.State.Piece==0?1.092f:item.State.Piece==1?1.194f:1.0725f;
+                if(item.GlobalPosition.Y+.014f<=top)throw new Exception("Desk surface occludes card: "+item.State.Id+" at "+item.GlobalPosition);
+                var p=item.GlobalPosition;
+                var hit=GetWorld3D().DirectSpaceState.IntersectRay(PhysicsRayQueryParameters3D.Create(p+Vector3.Up,p-Vector3.Up,3));
+                if(hit.Count==0||hit["collider"].AsGodotObject()!=item)throw new Exception("Desk object not pickable: "+item.State.Id);
+            }
+            if(OS.GetCmdlineUserArgs().Contains("--capture-desk-test")) {
+                await ToSignal(RenderingServer.Singleton,RenderingServer.SignalName.FramePostDraw);
+                GetViewport().GetTexture().GetImage().SavePng(ProjectSettings.GlobalizePath("res://../outputs/godot-desk-regression.png"));
+            }
+            GD.Seed(744);
+            for(int batch=0;batch<8;batch++) {
+                foreach(var item in items.Values){item.State.Place="container";Apply(item);}
+                Dump();
+                await ToSignal(GetTree().CreateTimer(1),SceneTreeTimer.SignalName.Timeout);
+                foreach(var item in items.Values.Where(i=>i.State.Place=="desk"&&i.GlobalPosition.Y>.8f)) {
+                    float top=Room.DeskSurface(item.GlobalPosition,item.Size,item.Rotation.Y,item.WorldOutline());
+                    if(item.GlobalPosition.Y+.014f<top)throw new Exception("Dump sank below desk surface: "+item.State.Id+" at "+item.GlobalPosition+" expected "+top);
+                }
+            }
+            GD.Print("PASS: 12 repeated edge placements on both faces, legacy desk positions, mat/binder/wood support, ray pickup and 8 seeded batch dumps; no player save loaded or written");GetTree().Quit(0);
+        }catch(Exception e){GD.PushError(e.ToString());GetTree().Quit(1);}
+    }
+    async void FloorTest() {
+        try {
+            // Reproduce the three occluded fragments from the reported save, without loading it.
+            var points=new[]{new Vector3(-1.6826f,-.0098f,.9204f),new Vector3(-.4042f,-.0098f,1.7028f),new Vector3(-.427f,-.0098f,.2336f)};
+            NodeHelpers.QueueFreeChildren(itemRoot);items.Clear();
+            foreach(var state in game.Data.Items) {
+                int index=state.Card==2 ? Array.IndexOf(new[]{1,4,5},state.Piece) : -1;
+                state.Place=index>=0?"floor":"container";
+                if(index>=0){var p=points[index];state.Position=new[]{p.X,p.Y,p.Z};}
+                Spawn(state);
+            }
+            await ToSignal(GetTree().CreateTimer(2),SceneTreeTimer.SignalName.Timeout);
+            foreach(var item in items.Values.Where(i=>i.State.Place=="floor")) {
+                if(item.GlobalPosition.Y<.02f)throw new Exception("Fragment sank under rug: "+item.State.Id+" at "+item.GlobalPosition);
+                var p=item.GlobalPosition;
+                var hit=GetWorld3D().DirectSpaceState.IntersectRay(PhysicsRayQueryParameters3D.Create(p+Vector3.Up,p-Vector3.Up,3));
+                if(hit.Count==0||hit["collider"].AsGodotObject()!=item)throw new Exception("Rug blocks fragment pickup: "+item.State.Id);
+            }
+            if(OS.GetCmdlineUserArgs().Contains("--capture-floor")) {
+                roomCamera.LookAt(new(-.7f,.03f,1));
+                await ToSignal(RenderingServer.Singleton,RenderingServer.SignalName.FramePostDraw);
+                GetViewport().GetTexture().GetImage().SavePng(ProjectSettings.GlobalizePath("res://../outputs/godot-floor-regression.png"));
+            }
+            GD.Print("PASS: all three reported buried fragments restored above collidable rug and ray-pickable; no player save loaded or written");GetTree().Quit(0);
         } catch(Exception e){GD.PushError(e.ToString());GetTree().Quit(1);}
     }
     void StageCapture() {
