@@ -1,0 +1,95 @@
+# A16 参考与验证记录
+
+本文件保存历史证据，不作为当前规则的并行副本。当前进度见 [PROJECT.md](PROJECT.md#progress)，现行玩法、美术和工程要求分别以对应职责文档为准。 更新时间：2026-11-25。
+
+- [参考资料](#references)
+- [Godot 验证记录](#godot-validation)
+- [文档检查与清理记录](#documentation-validation)
+- [迁移历史](#migration)
+
+<a id="references"></a>
+
+## 参考资料与证据边界
+
+本文件归档对话中的参考结论与链接。本轮进行文档整理，没有重新查询实时商店数据；不收录未经复核的销量、评价数、好评率或竞品稀缺性结论。后续立项市场判断应更新查询时间与样本范围。
+
+### 直接参考
+
+| 对象与来源 | 可借鉴内容 | 使用边界 |
+| --- | --- | --- |
+| [TCG Card Collection: Tidy Up 商店](https://store.steampowered.com/app/3712150/TCG_Card_Collection_Tidy_Up/) | 卡牌整理收藏、系列与品质吸引力、日常环境与鲜明卡图的对比 | 当前美术品质参考；不能复制资产，也未证明其完整制作成本 |
+| [Rip It! Card Collector／再拆亿包！商店](https://store.steampowered.com/app/5088440/Rip_It_Card_Collector/?l=schinese) | 拆包、收卡、重复卡处理、成长与自动设备 | 是机制参考，非本项目全量功能清单 |
+| [收卡设备官方截图](https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/5088440/2dc8cf14a43eec8f318143f4a1a827b0a08aa249/ss_2dc8cf14a43eec8f318143f4a1a827b0a08aa249.1920x1080.jpg?t=1794940648) | 双页、每页九格、翻页与定位控件 | 截图能证明外观，不能证明完整输入逻辑 |
+| [再拆亿包 Demo 技术检测](https://steamdb.info/app/5348340/info/) | 第三方检测显示 Unity、URP 等技术标签 | Demo ID 5348340，主游戏 5088440；未本地检查安装文件，不推断精确引擎版本 |
+| [SteamDB 技术检测说明](https://steamdb.info/tech/) | 文件特征自动检测的证据性质 | 不是开发者源项目证明 |
+| [Shift＋Click 收卡 MOD](https://www.nexusmods.com/ripitcardcollector/mods/1?tab=description) | 自动翻页归位的社区需求线索 | 这是 MOD，不能当作原版自带快捷键 |
+
+《再拆亿包》商店材料中的 1809 张卡包含 209 个 Critkin 的变体，不代表 1809 个独立角色；广告游玩时长也不是保证。对话中抽样评论提及收集、美术的吸引力，也提及自动设备排队与后期缺卡问题；不是本轮全量评论分析，不能外推到当前所有玩家。
+
+### 现实 TCG 信息结构参考
+
+- [Pokémon TCG 规则书](https://assets.pokemon.com/assets/cms2/pdf/trading-card-game/rulebook/xy1-rulebook-en.pdf)：现实卡牌的信息层级。
+- [Magic 卡牌结构说明](https://magic.wizards.com/en/news/feature/anatomy-magic-card-2006-10-21)：名称、类型、规则等区域的职能。
+- [Yu-Gi-Oh! 规则书](https://img.yugioh-card.com/en/downloads/rulebook/SD_RuleBook_EN_10.pdf)：对战信息的实例。
+
+这些资料用于区分「收藏识别需要的信息」与「战斗需要的信息」。本项目用户已明确不加入战斗字段，不能因为现实 TCG 普遍存在数值就重新加入。
+
+### 历史研究索引
+
+Waifu Curator、Armory Keeper、Cards: Tidy Up!、Keycap: Tidy Up!、Paver、Zero Stress King Idle Defense 等曾出现在讨论中，分别涉及整理归位、收藏、拼图与放置成长。当前材料不足以为每一款重建可靠的引擎、二维／三维、操作细节与评论统计，故仅保留名称索引，不补造结论。
+
+类似主题或同玩法产品「是否存在」需以明确检索范围和日期回答，不能把曾经未检索到当作长期没有竞品。未来市场复核应单独开展，不阻塞这次文档整理。
+
+### 《再拆亿包》的收卡设备：已知边界
+
+用户重点希望参考能翻页、快速放置的收藏设备。官方截图可见实体双页卡册，每页 3×3 插槽，翻页标识、滑动控件、按钮和页码显示。官方介绍还提到自动收卡设备 BinderBot。这些是参考观察，不是本项目已经实现的功能。
+
+本对话未安装试玩其 Demo；不能据此确定原版的全部按键、吸附阈值、翻页时机与快速收卡算法。网上 Shift＋Click 自动翻页归位的资料来自 MOD，不能当作原版默认交互。截图中 `1/20` 等指示的含义也未经确认。来源见 [参考资料](#references)。
+
+<a id="godot-validation"></a>
+
+## Godot 验证记录（2026-11-25）
+
+以下保留原执行时间、范围与限制，不代表本次文档拆分重新运行了游戏测试。
+
+复跑命令：在项目根执行 dotnet build godot/A16Study.csproj；引擎运行参数 --headless --path godot -- --smoke 或 --flow-test。截图参数 --path godot -- --capture / --capture-room，截图保存到 outputs，不写玩家存档。BaX 子模块未改源码。
+
+- dotnet build：0 错误、0 警告；Godot .NET 编辑器 headless 导入完成。
+- --smoke：验证脏卡／背面拒收、正确碎片固定、唯一合成、归档只计一次、扩容和隔离 BaX 存档往返。
+- --flow-test：在真实 Godot 场景执行射线拾取、倾倒、局部污渍清除、归档 Tween 暂停恢复、六片合成、错页拒收、快捷归档及完整场景快照往返。测试存档位于系统临时目录，不写用户进度。
+- --capture：在本机 RTX 4060 Ti 的 OpenGL 渲染下生成截图，已视觉检查并修正正反面朝向和照明。截图采用专门摆放的展示状态，不是自动试玩的完成画面，且不读写玩家存档。
+- 未执行 Steam SDK 集成、Windows 导出包、多硬件性能矩阵或十二卡完整流程验收；历史结果不作为当前 Godot 全量验收。
+
+<a id="documentation-validation"></a>
+
+## 文档检查与清理记录
+
+### 2026-11-25 五份职责文档拆分
+
+按用户确认将玩法与卡牌合并为 GAMEPLAY，与 PROJECT、ART、TECHNICAL、RECORDS 构成五份正文。历史验证证据保留。项目概览只维护范围、进度与任务索引，工程边界转入 TECHNICAL；README、AGENTS 和治理映射同步更新。美术文档的两处旧阶段措辞一并修正。
+
+本轮文档检查通过：138 项路径、64 个本地链接（包含章节锚点）、15 个资产文件引用；旧主文档章节引用扫描及 git diff --check 通过。核对 32 个非文档源文件的哈希未变，未修改游戏代码、素材、存档或依赖版本。未重跑游戏功能或性能测试，未提交推送。
+
+### 2026-11-25 残留复查修正
+
+修正产品范围中去污和收卡设备仍标未实现、引擎构建仍标未知、已移除图稿目录版本说明等过时内容；重开弹窗改为当前单一整理进度提示。旧文件删除与当前 Godot 文件纳入 Git 暂存跟踪，未提交或推送。补充批处理换行规则；现行实现与待扩展功能继续分开描述。
+
+### 2026-11-25 旧演示完全清理
+
+用户确认 Godot 可替代旧演示后授权完全清理。当前仅维护 Godot 工程，旧浏览器源码、独立演示、构建、服务、Node 依赖清单、试玩脚本、矢量生成器及三份历史说明均已移除。过时的目录例外、版本来源与旧迁移文件清单一并移除。
+
+保留 Godot 正在使用的三张卡图及卡背，四张 PNG 与迁移前来源逐一核对哈希一致；四份原始提示词原文保留，来源 manifest 改指 Godot 内的实际文件。未使用的旧风格和工艺研究图不再留在当前目录，可按 Git 历史回溯。美术登记 schema 升至 2，治理规范仍为 1.0.0。
+
+文档结构与资产完整性检查命令为 node .project/validate-docs.cjs；Godot 构建与隔离流程检查见技术章节。历史网页性能数据与旧 QA 不作为当前验收。原版 Python 结构检查尚未运行的环境限制仍登记在接入记录中。
+
+本次不修改 Godot 业务代码、核心库或玩家存档，不删除项目外的迁移备份，也不提交推送或发布。
+
+实际复核结果：文档检查通过（116 项路径、51 个本地链接、15 个资产文件引用，另核对保留资源完整性哈希）；dotnet build 为 0 错误、0 警告；Godot --flow-test 隔离场景流程通过，--capture 在实际 GPU 上渲染成功。已确认旧目录不存在，现行文档、治理清单、素材登记、检查脚本及 Godot 业务代码中无旧运行、构建和母源路径引用。
+
+<a id="migration"></a>
+
+## 项目迁移与版本历史
+
+项目于 2026-11-24 迁入 E:/work/A16 并建立 Git 与指定远程仓库。首次基线提交为 09892b4，当前在此基础上维护 Godot 工程。完整旧文件可通过 Git 历史回溯，不再维护过时的逐文件迁移清单。
+
+原项目目录只作外部历史备份，本次清理不触及该目录。当前唯一开发入口为 E:/work/A16；单一 Godot 自动存档继续使用现有独立路径，不因代码清理被删除或重置。

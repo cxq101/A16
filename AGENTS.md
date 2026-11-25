@@ -1,10 +1,10 @@
 # 项目开发约束
 
-本项目采用 project-formalization 规范 **1.0.0**，接入记录见 [.project/formalization.json](.project/formalization.json)。具体约束见 [项目文档的工程章节](docs/PROJECT.md#governance)，个人技能更新不自动升级项目。
+本项目采用 project-formalization 规范 **1.0.0**，接入记录见 [.project/formalization.json](.project/formalization.json)。具体约束见 [工程与维护规范](docs/TECHNICAL.md#governance)，个人技能更新不自动升级项目。
 
-先读本文件和 [统一项目文档](docs/PROJECT.md)。用户仅要求理解或审查时保持只读。
+先读本文件和 [项目概览](docs/PROJECT.md)。用户仅要求理解或审查时保持只读。
 
-- 玩法、卡牌信息及工程规则维护在 PROJECT.md；视觉设计与美术制作独立维护在 [ART.md](docs/ART.md#art)，不重复维护两份正文；机器读取的资产选择状态只维护在 .project/artifacts.json。用户最新要求优先，提案、历史记录、原型实现与已确认要求分开，不把生成图当作已验收素材。
+- PROJECT 维护定位与进度；GAMEPLAY 统一维护玩法与卡牌内容；ART 维护视觉与制作；TECHNICAL 维护实现与工程约束；RECORDS 保存参考资料、验证与迁移记录。按任务阅读对应职责文档，同一规则只维护一处；机器读取的资产选择状态只维护在 .project/artifacts.json。用户最新要求优先，提案、历史记录、原型实现与已确认要求分开，不把生成图当作已验收素材。
 - 当前按用户决定使用 Godot .NET 4.7.1＋C# 进行效果验证，版本锁见 .project/engine.json。BaX v0.1.5 通过子模块固定引用，公共机制与领域规则分层；最终画风、预算和完整十二卡实现仍待确认／扩展。
 - 用户已确认 Godot 版可替代旧演示并授权完全清理；当前只维护 godot 工程。美术资源在 godot/assets，提示词与来源清单在 source，修改资产时同步完整性登记。
 - 保护用户存档；测试使用隔离进程和临时存档路径，不随意清除或迁移。

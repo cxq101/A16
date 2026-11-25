@@ -5,7 +5,7 @@
   "framework": {
     "name": "BaX",
     "versionSource": ".project/engine.json",
-    "boundaryDocument": "docs/PROJECT.md"
+    "boundaryDocument": "docs/TECHNICAL.md"
   },
   "directories": [
     {
@@ -14,7 +14,7 @@
     },
     {
       "path": "docs",
-      "purpose": "PROJECT.md 维护项目规则与记录，ART.md 独立维护美术设计与制作"
+      "purpose": "五份职责正文：项目概览、玩法与内容、美术、工程实现与维护、历史记录"
     },
     {
       "path": "outputs",
@@ -57,12 +57,12 @@
     },
     {
       "topic": "gameplay-and-progression",
-      "path": "docs/PROJECT.md",
+      "path": "docs/GAMEPLAY.md",
       "section": "gameplay"
     },
     {
       "topic": "card-specification",
-      "path": "docs/PROJECT.md",
+      "path": "docs/GAMEPLAY.md",
       "section": "cards"
     },
     {
@@ -72,27 +72,22 @@
     },
     {
       "topic": "interaction",
-      "path": "docs/PROJECT.md",
+      "path": "docs/GAMEPLAY.md",
       "section": "interaction"
     },
     {
       "topic": "technical-baseline",
-      "path": "docs/PROJECT.md",
+      "path": "docs/TECHNICAL.md",
       "section": "technical"
     },
     {
-      "topic": "decision-history",
-      "path": "docs/PROJECT.md",
-      "section": "decisions"
-    },
-    {
       "topic": "reference-evidence",
-      "path": "docs/PROJECT.md",
+      "path": "docs/RECORDS.md",
       "section": "references"
     },
     {
       "topic": "governance",
-      "path": "docs/PROJECT.md",
+      "path": "docs/TECHNICAL.md",
       "section": "governance"
     },
     {
@@ -106,8 +101,23 @@
     },
     {
       "topic": "migration-record",
-      "path": "docs/PROJECT.md",
+      "path": "docs/RECORDS.md",
       "section": "migration"
+    },
+    {
+      "topic": "project-progress",
+      "path": "docs/PROJECT.md",
+      "section": "progress"
+    },
+    {
+      "topic": "pending-decisions",
+      "path": "docs/PROJECT.md",
+      "section": "open-questions"
+    },
+    {
+      "topic": "validation-evidence",
+      "path": "docs/RECORDS.md",
+      "section": "godot-validation"
     }
   ],
   "versions": [
@@ -175,7 +185,10 @@
     "godot/launch.cmd",
     "godot/assets/source/manifest.json",
     "godot/assets/source/.gdignore",
-    ".gitattributes"
+    ".gitattributes",
+    "docs/GAMEPLAY.md",
+    "docs/TECHNICAL.md",
+    "docs/RECORDS.md"
   ],
   "exceptions": [
     {
